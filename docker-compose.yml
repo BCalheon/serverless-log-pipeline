@@ -1,0 +1,14 @@
+services:
+  localstack:
+    container_name: localstack_main
+    image: localstack/localstack:3.0.0
+    ports:
+      - "4566:4566"            # Gateway principal (AWS/Azure Fake)
+      - "4510-4559:4510-4559"  # Portas extras para serviços específicos
+    environment:
+      - SERVICES=s3,ec2,lambda,iam,sts,apigateway,dynamodb # O que queremos simular
+      - DEBUG=1                 # Mostra logs detalhados (ótimo para aprender)
+      - DATA_DIR=/tmp/localstack/data # Onde salvar dados temporários
+    volumes:
+      - "./.localstack:/var/lib/localstack" # Persistência (não perder dados ao reiniciar)
+      - "/var/run/docker.sock:/var/run/docker.sock" # Permite LocalStack criar Lambda
