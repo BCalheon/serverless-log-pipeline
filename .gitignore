@@ -1,3 +1,22 @@
+# Terraform
 .terraform/
 *.tfstate
-.devcontainer/
+*.tfstate.*
+*.tfplan
+.terraform.lock.hcl
+
+# LocalStack & Docker
+.localstack/
+docker-compose.override.yml
+
+# Logs e Arquivos Temporários (O "Lixo")
+*.log
+stress_*.log
+log_producao.log
+*.txt
+
+# Segredos e IDE
+.env
+.vscode/
+.idea/
+*.swp

@@ -1,14 +1,36 @@
+version: "3.8"
+
 services:
   localstack:
     container_name: localstack_main
-    image: localstack/localstack:3.0.0
+    image: localstack/localstack:latest
     ports:
-      - "4566:4566"            # Gateway principal (AWS/Azure Fake)
-      - "4510-4559:4510-4559"  # Portas extras para serviços específicos
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
     environment:
-      - SERVICES=s3,ec2,lambda,iam,sts,apigateway,dynamodb # O que queremos simular
-      - DEBUG=1                 # Mostra logs detalhados (ótimo para aprender)
-      - DATA_DIR=/tmp/localstack/data # Onde salvar dados temporários
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - SERVICES=s3,lambda,iam,sts,dynamodb,logs,cloudwatch
     volumes:
-      - "./.localstack:/var/lib/localstack" # Persistência (não perder dados ao reiniciar)
-      - "/var/run/docker.sock:/var/run/docker.sock" # Permite LocalStack criar Lambda
+      - "${LOCALSTACK_VOLUME_DIR:-./.localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  grafana:
+    container_name: grafana_lab
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    volumes:
+      # MAPEAMENTO CRUCIAL: Injeta as configurações locais para dentro do container
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - localstack
+    links:
+      - localstack
+
+networks:
+  default:
+    name: devops-network

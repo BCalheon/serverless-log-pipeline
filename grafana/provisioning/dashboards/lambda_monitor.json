@@ -1,0 +1,21 @@
+{
+  "title": "Cloud Infrastructure - Service Monitor",
+  "uid": "infra-monitor-01",
+  "panels": [
+    {
+      "title": "Lambda Invocations (Real-time Processing)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": "LocalStack-CloudWatch",
+          "namespace": "AWS/Lambda",
+          "metricName": "Invocations",
+          "dimensions": { "FunctionName": "LambdaLogProcessor" },
+          "region": "us-east-1",
+          "statistics": ["Sum"]
+        }
+      ]
+    }
+  ]
+}
