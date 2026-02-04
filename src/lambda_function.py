@@ -32,7 +32,7 @@ def lambda_handler(event, context):
         )
         print(f"✅ Registro salvo no DynamoDB.")
 
-        # 3. LIMPEZA (FinOps): Apaga o ficheiro do S3 após processar
+        # 3. Cleanup (FinOps): Delete the S3 file after processing
         s3_client.delete_object(Bucket=bucket, Key=key)
         print(f"🗑️ Ficheiro {key} removido do S3 para economizar custos.")
         
