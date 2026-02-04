@@ -34,7 +34,6 @@ bootstrap:
 	$(TF_CMD) init
 	
 	@echo "🔗 Sincronizando estado do Backend..."
-	# CORREÇÃO AQUI: module.s3_bucket_infra em vez de s3_bucket_devops
 	$(TF_CMD) import module.s3_bucket_infra.aws_s3_bucket.this $(BUCKET_NAME)
 	@echo "✅ Ambiente Docker e IaC prontos!"
 
@@ -68,12 +67,12 @@ destroy:
 	-aws --endpoint-url=$(ENDPOINT) s3 rb s3://$(BUCKET_NAME) --force
 
 # ==========================================
-# 3. TESTES E CARGA: Simulação de Tráfego
+# 3. TESTES E CARGA: Simulação de Tráfego Dinâmico
 # ==========================================
 test-confirm:
 	@echo ""
-	@echo "🧪 Infraestrutura ativa. Deseja iniciar a simulação de tráfego para monitoramento?"
-	@read -p "🚀 Rodar Stress Test? [y/N]: " ans; \
+	@echo "🧪 Infraestrutura ativa. Deseja iniciar a simulação de tráfego dinâmico?"
+	@read -p "🚀 Rodar Stress Test com Variação? [y/N]: " ans; \
 	if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
 		$(MAKE) stress-test; \
 	else \
@@ -81,17 +80,25 @@ test-confirm:
 	fi
 
 stress-test:
-	@echo "🚀 Iniciando simulação de tráfego sustentado (3 ondas)..."
-	@for wave in 1 2 3; do \
-		echo "🌊 Onda $$wave: Enviando rajada de logs..."; \
-		for i in 1 2 3 4 5; do \
-			echo "EVENT_W$$wave_$$i: Log entry generated at $$(date)" > event_w$$wave_$$i.log; \
+	@echo "🚀 Iniciando Stress Test Dinâmico (4 ondas de volumes variados)..."
+	@for wave in 1 2 3 4; do \
+		case $$wave in \
+			1) COUNT=3 ;; \
+			2) COUNT=12 ;; \
+			3) COUNT=1 ;; \
+			4) COUNT=7 ;; \
+		esac; \
+		echo "🌊 Onda $$wave: Enviando $$COUNT logs para gerar variação no gráfico..."; \
+		for i in $$(seq 1 $$COUNT); do \
+			echo "EVENT_W$$wave_$$i: Log generated at $$(date)" > event_w$$wave_$$i.log; \
 			curl -s -X PUT -T event_w$$wave_$$i.log $(ENDPOINT)/$(BUCKET_NAME)/event_w$$wave_$$i.log; \
 		done; \
-		echo "⏳ Aguardando consolidação de métricas (65s)..."; \
-		sleep 65; \
+		if [ $$wave -lt 4 ]; then \
+			echo "⏳ Aguardando 65s para consolidar o próximo ponto no CloudWatch..."; \
+			sleep 65; \
+		fi; \
 	done
-	@echo "✅ Simulação concluída! Verifique as séries temporais no Dashboard."
+	@echo "✅ Variação de tráfego concluída! Verifique os picos e vales no Dashboard."
 
 # ==========================================
 # 4. UTILITÁRIOS: Inspeção e Limpeza
