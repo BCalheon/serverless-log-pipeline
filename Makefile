@@ -1,6 +1,4 @@
-# ==========================================
-# Variáveis Globais e Configurações
-# ==========================================
+# Global Variables and Settings
 SHELL := /bin/bash
 BUCKET_NAME=lab-devops-terraform-state-v1
 ENDPOINT=http://localhost:4566
@@ -9,14 +7,10 @@ TF_PLAN_FILE=terraform.tfplan
 
 .PHONY: up bootstrap-full plan-confirm test-confirm bootstrap apply destroy list-db list-s3 stress-test clean-s3-logs test-upload
 
-# ==========================================
-# 0. MASTER: Orquestração do Ambiente
-# ==========================================
+# Environment Orchestration
 up: bootstrap-full plan-confirm test-confirm
 
-# ==========================================
-# 1. BOOTSTRAP: Inicialização do Laboratório
-# ==========================================
+# BOOTSTRAP: Laboratory Initialization
 bootstrap:
 	@echo "🔄 Reiniciando containers e volumes..."
 	docker-compose down
@@ -37,9 +31,7 @@ bootstrap:
 	$(TF_CMD) import module.s3_bucket_infra.aws_s3_bucket.this $(BUCKET_NAME)
 	@echo "✅ Ambiente Docker e IaC prontos!"
 
-# ==========================================
-# 2. PROVISIONAMENTO: Ciclo de Vida do Terraform
-# ==========================================
+# 2. PROVISIONING: Terraform Lifecycle
 bootstrap-full:
 	@echo "🚀 Iniciando ciclo de vida da infraestrutura..."
 	$(MAKE) bootstrap
@@ -66,9 +58,7 @@ destroy:
 	@echo "🗑️  Removendo recursos persistentes..."
 	-aws --endpoint-url=$(ENDPOINT) s3 rb s3://$(BUCKET_NAME) --force
 
-# ==========================================
-# 3. TESTES E CARGA: Simulação de Tráfego Dinâmico
-# ==========================================
+# STESSTEST: Dynamic Traffic Simulation
 test-confirm:
 	@echo ""
 	@echo "🧪 Infraestrutura ativa. Deseja iniciar a simulação de tráfego dinâmico?"
@@ -100,9 +90,7 @@ stress-test:
 	done
 	@echo "✅ Variação de tráfego concluída! Verifique os picos e vales no Dashboard."
 
-# ==========================================
-# 4. UTILITÁRIOS: Inspeção e Limpeza
-# ==========================================
+# UTILITIES: Inspection and Cleaning
 list-db:
 	@echo "📊 Estado atual da tabela DynamoDB:"
 	aws --endpoint-url=$(ENDPOINT) dynamodb scan --table-name Tb_Logs_DevOps --query 'Items[*].{Arquivo:LockID.S, Status:Status.S}' --output table
