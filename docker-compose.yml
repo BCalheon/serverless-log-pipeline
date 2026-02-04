@@ -24,7 +24,7 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     volumes:
-      # MAPEAMENTO CRUCIAL: Injeta as configurações locais para dentro do container
+      # Injects local settings into the container
       - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - localstack
