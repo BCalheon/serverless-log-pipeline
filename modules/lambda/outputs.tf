@@ -1,5 +1,5 @@
 output "lambda_arn" {
-  description = "O ARN da função Lambda criada"
+  description = "The ARN of the created lambda function"
   value       = aws_lambda_function.this.arn
 }
 
