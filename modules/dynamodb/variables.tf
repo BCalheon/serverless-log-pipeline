@@ -1,5 +1,5 @@
 variable "table_name" {
-  description = "Nome da tabela DynamoDB"
+  description = "db_dynamotest"
   type        = string
 }
 
