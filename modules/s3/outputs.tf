@@ -1,5 +1,5 @@
 output "bucket_arn" {
-  description = "O ARN (Amazon Resource Name) do bucket criado"
+  description = "Amazon Resource Name of the created bucket"
   value       = aws_s3_bucket.this.arn
 }
 
