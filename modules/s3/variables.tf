@@ -1,16 +1,16 @@
 variable "bucket_name" {
-  description = "O nome do bucket que será criado"
+  description = "Name of the bucket that will be created"
   type        = string
 }
 
 variable "tags" {
-  description = "Tags para o recurso (FinOps)"
+  description = "Resource tags (FinOps)"
   type        = map(string)
   default     = {}
 }
 
 variable "allow_force_destroy" {
-  description = "Permite deletar o bucket mesmo com arquivos. Use apenas em Dev/Lab!"
+  description = "Permission to delete the bucket even with archives inside" #use only in lab's :)
   type        = bool
-  default     = false # PADRÃO SEGURO
+  default     = false # Safe pattern
 }
