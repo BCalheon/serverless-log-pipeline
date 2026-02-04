@@ -5,7 +5,7 @@ resource "aws_dynamodb_table" "basic-dynamodb-table" {
 
   attribute {
     name = "LockID"
-    type = "S" # String
+    type = "S"
   }
 
   tags = var.tags
